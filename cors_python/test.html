@@ -1,0 +1,51 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test</title>
+</head>
+<body>
+    <h1>Testing CORS</h1>
+    <script>
+      fetch("http://localhost:5000/api/get-data")
+        .then(response => response.json())
+        .then(data => console.log("Response Data:", data))
+        .catch(err => console.error("CORS error:", err));
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test</title>
+</head>
+<body>
+    <h1>Testing CORS with Preflight Request</h1>
+    <button onclick="makeRequest()">Test CORS</button>
+
+    <script>
+        function makeRequest() {
+            fetch("http://localhost:8080/api/get-data", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"  // This header triggers the preflight request
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP error " + response.status);
+                }
+                return response.json();
+            })
+            .then(data => console.log("Response:", data))
+            .catch(err => console.error("Error:", err));
+        }
+    </script>
+</body>
+</html>
+
+
