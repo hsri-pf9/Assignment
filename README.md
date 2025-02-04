@@ -197,3 +197,101 @@ This module is responsible for:
 
 ## Prometheus and Grafana monitoring
 ### Overview
+This implementation extends the Flask server by integrating Prometheus to track and expose HTTP request metrics.
+
+### **How It Works**
+- A **Prometheus Counter** (`total_http_requests`) tracks the number of HTTP requests received.
+- The `/ping` endpoint increments the counter and responds with `"pong"`.
+- The `/metrics` endpoint exposes Prometheus metrics, which can be scraped by Prometheus for monitoring.
+- The Flask application uses `DispatcherMiddleware` to serve the metrics.
+
+### **Code Explanation**
+1. **`http_request_counter`**: A Prometheus Counter that increments every time the `/ping` endpoint is accessed.
+2. **`/ping` Route**: Responds with `"pong"` and increments the counter.
+3. **`/metrics` Endpoint**: Serves Prometheus metrics, allowing Prometheus to scrape data.
+4. **Flask Application Runs on Port 8000**.
+5. **Dockerized Deployment** using a `Dockerfile`.
+
+### **Running the Flask Server in Docker**
+#### **1. Created a `requirements.txt` file**
+Ensure that your `requirements.txt` file contains the necessary dependencies:
+
+```
+flask
+prometheus_client
+werkzeug
+```
+
+#### **2. Build and Run the Docker Container**
+#### **Step 1: Build the Docker Image**
+```sh
+docker build -t flask-prometheus-app .
+```
+
+#### **Step 2: Run the Container**
+```sh
+docker run -d --name flask_app -p 8000:8000 flask-prometheus-app
+```
+
+#### **3. Access the Flask Server**
+- `http://localhost:8000/ping` → Responds with `pong`
+- `http://localhost:8000/metrics` → Exposes Prometheus metrics
+
+### **Setting Up Prometheus and Grafana in Docker**
+
+#### **1. Run Prometheus in Docker**
+Pull and run Prometheus:
+
+```sh
+docker run -d --name=prometheus -p 9090:9090 prom/prometheus
+```
+
+#### **2. Configure Prometheus**
+Create a Prometheus config file (`prometheus.yml`):
+
+```yaml
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'flask_app'
+    static_configs:
+      - targets: ['host.docker.internal:8000']
+```
+
+Run Prometheus with the config:
+
+```sh
+docker run -d --name=prometheus -p 9090:9090 -v $(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+```
+
+Check Prometheus UI at:  
+**[http://localhost:9090](http://localhost:9090)**  
+
+Query `total_http_requests` to see request counts.
+
+#### **3. Run Grafana in Docker**
+Pull and run Grafana:
+
+```sh
+docker run -d --name=grafana -p 3000:3000 grafana/grafana
+```
+
+Access Grafana at:  
+**[http://localhost:3000](http://localhost:3000)**  
+(Default login: **admin / admin**)
+
+### **4. Add Prometheus as a Data Source in Grafana**
+1. Open Grafana (`http://localhost:3000`).
+2. Navigate to **Configuration > Data Sources**.
+3. Click **"Add data source"** and select **Prometheus**.
+4. Set URL to: `http://host.docker.internal:9090`
+5. Click **"Save & Test"**.
+
+### **5. Create a Grafana Dashboard**
+1. Go to **Create > Dashboard**.
+2. Click **"Add a new panel"**.
+3. Select **`total_http_requests`** as the metric.
+4. Click **"Apply"**.
+
+I also have two other files namend `flask-prometheus-app` and `flask-prometheus-grafana` in which I have tried doing different variations of the task. In `flask-prometheus-grafana` I tried to put the server, prometheus and grafana in the same container and then monitor the server.
