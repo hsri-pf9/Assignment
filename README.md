@@ -6,6 +6,7 @@ This repository contains 3 folders for 3 different assignments:
 3. Monitoring using Prometheus and Grafana
 ---
 ## Cross Origin Resource Sharing (CORS)
+### Overview
 It is a browser mechanism which enables controlled access to resources located outside of a given domain.The protocol uses a suite of HTTP headers that define trusted web origins and associated properties such as whether authenticated access is permitted. CORS also relies on a mechanism by which browsers make a "preflight" request to the server hosting the cross-origin resource, in order to check that the server will permit the actual request. In that preflight, the browser sends headers that indicate the HTTP method and headers that will be used in the actual request.
 
 In the folder ```cors-python``` there are 4 files each having different functionalities:
@@ -133,4 +134,66 @@ This ensures that only specific origins can make GET requests and access the API
 
    ```sh
    python3 -m http.server 3000  # Runs on http://localhost:3000
+---
 
+## API Throughput Middleware
+### Overview
+In this assignment I ran two python servers one is ```ping_pong_with_flask.py``` and second one is ```ping_pong_without_flask.py``` using Python’s built-in `http.server`, The aim was to see what is the difference if we create a server with flask and without flask. This project is designed to compare the performance of two different server implementations handling the same API endpoints. The servers expose `/ping` and `/invalid` endpoints, and a middleware component tracks API throughput, latency, and success/failure rates.
+
+### Objective
+The objective of this project is to:
+- Compare a Flask-based server (`ping_pong_with_flask.py`) and a standard HTTP server (`ping_pong_without_flask.py`).
+- Measure API throughput using middleware to track request success, failure rates, and latency.
+- Automatically send requests to both servers and analyze performance.
+
+## How It Works
+1. **Two servers are started**:
+   - A Flask-based server running on port `3002`.
+   - A basic HTTP server running on port `3001`.
+2. **Requests are automatically sent** to both servers (`25` requests each).
+3. **Middleware logs and measures request performance**, including success/failure rates and request latency.
+4. **Results are printed** after all requests are processed.
+
+### Explanation
+
+#### 1. `main.py` (Entry Point)
+This file is responsible for:
+- Launching both the Flask server and the HTTP server in separate threads.
+- Sending 25 requests to each server.
+- Printing the responses and performance metrics.
+
+#### 2. `ping_pong_with_flask.py` (Flask-Based Server)
+This file defines a Flask server with two endpoints:
+- `/ping` → Responds with `{ "message": "pong" }`.
+- `/invalid` → Responds with `{ "error": "Not Found" }` (404 error).
+- It uses the `Middleware` class to track request performance.
+
+#### 3. `ping_pong_without_flask.py` (HTTP Server Without Flask)
+This file creates a simple HTTP server using Python’s `http.server`. It defines:
+- `/ping` → Responds with `{ "message": "pong" }`.
+- Any other route returns `{ "error": "Invalid endpoint" }` (404 error).
+- It also uses the `Middleware` class to track request performance.
+
+### 4. `middleware.py` (Performance Tracker)
+This module is responsible for:
+- Tracking total API requests, successful requests, and failed requests.
+- Calculating success rate, failure rate, and request latency.
+- Logging performance metrics to the console.
+
+### Running the Project
+
+1. **Install dependencies** (if using Flask):
+   ```sh
+   pip install flask requests
+   ```
+2. **Run the script:**
+   ```sh
+   python main.py
+   ```
+3. **Expected Output:**
+   - Each request’s response from both servers.
+   - Metrics, including total requests, success rates, and request latency.
+---
+
+## Prometheus and Grafana monitoring
+### Overview
