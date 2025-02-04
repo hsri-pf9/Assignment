@@ -138,7 +138,7 @@ This ensures that only specific origins can make GET requests and access the API
 
 ## API Throughput Middleware
 ### Overview
-In this assignment I ran two python servers one is ```ping_pong_with_flask.py``` and second one is ```ping_pong_without_flask.py``` using Python’s built-in `http.server`, The aim was to see what is the difference if we create a server with flask and without flask. This project is designed to compare the performance of two different server implementations handling the same API endpoints. The servers expose `/ping` and `/invalid` endpoints, and a middleware component tracks API throughput, latency, and success/failure rates.
+In this assignment which is in the folder ```API_Throughput_Middleware``` I ran two python servers one is ```ping_pong_with_flask.py``` and second one is ```ping_pong_without_flask.py``` using Python’s built-in `http.server`, The aim was to see what is the difference if we create a server with flask and without flask. This project is designed to compare the performance of two different server implementations handling the same API endpoints. The servers expose `/ping` and `/invalid` endpoints, and a middleware component tracks API throughput, latency, and success/failure rates.
 
 ### Objective
 The objective of this project is to:
@@ -197,7 +197,7 @@ This module is responsible for:
 
 ## Prometheus and Grafana monitoring
 ### Overview
-This implementation extends the Flask server by integrating Prometheus to track and expose HTTP request metrics.
+I have a folder named ```Prometheus```. This implementation extends the Flask server by integrating Prometheus to track and expose HTTP request metrics.
 
 ### **How It Works**
 - A **Prometheus Counter** (`total_http_requests`) tracks the number of HTTP requests received.
